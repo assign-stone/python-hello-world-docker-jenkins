@@ -9,7 +9,6 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // Specify the correct branch
                 git branch: 'main', url: 'https://github.com/assign-stone/python-hello-world-docker-jenkins.git'
             }
         }
@@ -25,7 +24,6 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Use DockerHub credentials to push
                     withDockerRegistry([credentialsId: 'dockerhub', url: '']) {
                         sh "docker push ${IMAGE_NAME}:latest"
                     }
@@ -34,4 +32,3 @@ pipeline {
         }
     }
 }
-
