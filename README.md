@@ -31,10 +31,11 @@ A practical, hands-on example that demonstrates how to create a **Python Flask w
 Visual representation of the pipeline:
 
 ```mermaid
+
 flowchart LR
-    A[Python Flask App (helloworld.py)] --> B[Docker (Build & Containerize)]
-    B --> C[Jenkins (Build & Push Pipeline)]
-    C --> D[Docker Hub (Container Registry)]
+    A["Python Flask App - helloworld.py"] --> B["Docker - Build & Containerize"]
+    B --> C["Jenkins - Build & Push Pipeline"]
+    C --> D["Docker Hub - Container Registry"]
 ```
 
 ---
