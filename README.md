@@ -116,43 +116,42 @@ Place this Jenkinsfile at the repository root so Jenkins (Multibranch Pipeline o
 
 ```groovy
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    IMAGE = "assign-stone/pythonhelloworld"
-    TAG   = "${env.BUILD_NUMBER}"
-  }
-
-  stages {
-    stage('Checkout') { steps { checkout scm } }
-
-    stage('Build Image') {
-      steps {
-        script {
-          dockerImage = docker.build("${IMAGE}:${TAG}")
-        }
-      }
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+        IMAGE_NAME = "shivanijoshi38/pythonhelloworld"
     }
 
-    stage('Push Image') {
-      steps {
-        script {
-          // dockerhub is a Jenkins username/password credential
-          docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-            dockerImage.push()
-            dockerImage.push('latest')
-          }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                // Specify the correct branch
+                git branch: 'main', url: 'https://github.com/assign-stone/python-hello-world-docker-jenkins.git'
+            }
         }
-      }
-    }
-  }
 
-  post {
-    always { cleanWs() }
-    success { echo "Image pushed: ${IMAGE}:${TAG}" }
-    failure { echo 'Build or push failed' }
-  }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "docker build -t ${IMAGE_NAME}:latest ."
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    // Use DockerHub credentials to push
+                    withDockerRegistry([credentialsId: 'dockerhub', url: '']) {
+                        sh "docker push ${IMAGE_NAME}:latest"
+                    }
+                }
+            }
+        }
+    }
 }
+
 ```
 
 Jenkins setup notes
